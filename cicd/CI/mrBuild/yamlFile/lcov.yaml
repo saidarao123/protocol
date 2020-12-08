@@ -1,0 +1,44 @@
+---
+  general:
+    gitSshCredentilasId: gsr483@gmail.com
+    productName: Oceanstor Pacific 18510 8.1.0
+    repoType: github
+    submoduleOption: 
+      disableSubmodules: ${disableSubmodules}
+    workspace: ${mr_work_dir}
+
+
+  mrBuildVariables:
+    compileOptionsCheck: false
+    secBinaryCheck: false
+
+  machine:
+    type: standard
+    buildEnvLabel: ${label}
+    onSameNode: true
+
+  stages:
+    - name: build
+      tasks:
+        - name: compile_lcov
+          preBuild:
+            scripts:
+               - "git config --global credential.helper store || true"
+               - "set +e;wget -q -c --timeout=600 http://100.99.87.75/git_files/mix/pull_gitfile.sh || true;/bin/bash pull_gitfile.sh || true"
+               - set +e; ls  -al ${WORKSPACE}/.git/;find ${WORKSPACE}/.git -type f  -name *.lock -exec rm -rf {} \; ; pkill *_test || true
+
+         scripts:
+           - "/bin/bash cicd/CI/mrBuild/buildScript/testtrigger.sh"
+           - git stash || true
+  
+
+        repos:
+          - name: product
+            url: ${repoUrl} 
+            checkoutDir: "./"
+            username: "saidarao123"
+            useremail: "gsr483@gmail.com"
+          - name:cicd
+            url: "https://github.com/saidarao123/protocol.git"
+            branch: ${pcrBranch}
+            checkoutDir: cicd
