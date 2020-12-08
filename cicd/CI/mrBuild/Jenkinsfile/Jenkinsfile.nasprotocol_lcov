@@ -1,0 +1,39 @@
+#!/usr/bin/env groovy
+@Library('shared-lib@master')
+script {
+    def pms = [
+            string(name: 'sourceBranch', defaultValue: "", descriptuin: ''),
+            string(name: 'targetBranch', defaultValue: "", description: ''),
+            string(name: 'repoName', defaultValue: "", description: ''),
+            string(name: 'localId', defaultValue: "", description: ''),
+            string(name: 'mrId', defaultValue: "", description: ''),
+            string(name: 'repoUrl', defaultValue: "", description: ''),
+            string(name: 'label', defaultValue: "nas_protocol", description: ''),
+            string(name: 'mr_work_dir', defaultValue: "/home/jenkins/workspace/protocol_2324", description: ''),
+    ]
+    pipelineSetProperties {
+       daysTokeepLog = 2
+       numTokeepLog = 500
+       buildparams = pms
+   }
+
+   if (params.timeout && params.timeout != "") {
+      timeout(time: params.timeout, unit: 'MINUTES') {
+         mrBuildcipipeline {
+            ciBuildName: "mrBuild/yamlFile/lcov.yaml" 
+            scheduleLabel = "schedule_label"
+            deleteWS = "true"
+       }
+    }
+ }else {
+  mrBuildCipieline {
+  ciBuildName = "mrBuild/yamlFile/lcov.yaml"
+  schedulelabel = "schedule_label"
+  deleteWS = "true"
+  }
+ }
+}
+
+ 
+      
+          
